@@ -5,8 +5,7 @@ A query analyzer that parses Redis' MONITOR command for counter/timing stats abo
 
 At its core, redis-faina uses the Redis MONITOR command, which echoes every single command (with arguments) sent to a Redis instance. It parses these
 entries, and aggregates stats on the most commonly-hit keys, the queries that took up the most amount of time, and the most common key prefixes
-as well. Using it, we've cut the number of requests on one of our systems from 23,000 requests per second to ~11,000, by identifying places where
-we could batch-fetch information or eliminate extraneous commands.
+as well.
 
 Usage is simple:
 
