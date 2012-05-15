@@ -36,13 +36,13 @@ queued              7
 Top Keys
 ========================================
 friendlist:zzz:1:2     534
-followingcounter:zzz     227
-friendlist:zzz:1:2     167
-friendlist:zzz:1:2     165
-friendlist:zzz:1:2     160
-friendlist:zzz:1:2     160
-friendlist:zzz:1:2     160
-friendlist:zzz:1:2     156
+followingcount:zzz     227
+friendlist:zxz:1:2     167
+friendlist:xzz:1:2     165
+friendlist:yzz:1:2     160
+friendlist:gzz:1:2     160
+friendlist:zdz:1:2     160
+friendlist:zpz:1:2     156
 
 Top Commands
 ========================================
@@ -76,13 +76,13 @@ EXEC        28678.5
 Slowest Calls
 ========================================
 3490.75     "SMEMBERS" "friendlist:zzz:1:2"
-2362.0      "SMEMBERS" "friendlist:zzz:1:3"
-2061.0      "SMEMBERS" "friendlist:zzz:1:2"
-1961.0      "SMEMBERS" "friendlist:zzz:1:2"
-1947.5      "SMEMBERS" "friendlist:zzz:1:2"
-1459.0      "SISMEMBER" "friendlist:zzz:1:2" "zzz"
-1416.25     "SMEMBERS" "friendlist:zzz:1:2"
-1389.75     "SISMEMBER" "friendlist:zzz:1:2" "zzz"
+2362.0      "SMEMBERS" "friendlist:xzz:1:3"
+2061.0      "SMEMBERS" "friendlist:zpz:1:2"
+1961.0      "SMEMBERS" "friendlist:yzz:1:2"
+1947.5      "SMEMBERS" "friendlist:zpz:1:2"
+1459.0      "SISMEMBER" "friendlist:hzz:1:2" "zzz"
+1416.25     "SMEMBERS" "friendlist:zhz:1:2"
+1389.75     "SISMEMBER" "friendlist:zzx:1:2" "zzz"
 </pre>
 
 
