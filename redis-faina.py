@@ -152,6 +152,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--prefix-delimiter',
         type = str,
+        default = ':',
         help = "String to split on for delimiting prefix and rest of key",
         required = False)
     args = parser.parse_args()
