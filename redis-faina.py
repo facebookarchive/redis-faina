@@ -40,25 +40,6 @@ class StatCounter(object):
         if len(parts) > 1:
             self.prefixes[parts[0]] += 1
 
-    def process_entry(self, entry):
-        self._record_duration(entry)
-        self._record_command(entry)
-        if entry['key']:
-            self._record_key(entry['key'])
-
-    def _top_n(self, stat, n=8):
-        sorted_items = sorted(stat.iteritems(), key = lambda x: x[1], reverse = True)
-        return sorted_items[:n]
-
-    def _pretty_print(self, result, title):
-        print title
-        print '=' * 40
-        max_key_len = max((len(x[0]) for x in result))
-        for key, val in result:
-            key_padding = max(max_key_len - len(key), 0) * ' '
-            print key,key_padding,'\t',val
-        print
-
     @staticmethod
     def _reformat_entry(entry):
         max_args_to_show = 5
@@ -111,11 +92,35 @@ class StatCounter(object):
             ("Commands/Sec", '%.2f' % (self.line_count / total_time))
         )
 
+    def process_entry(self, entry):
+        self._record_duration(entry)
+        self._record_command(entry)
+        if entry['key']:
+            self._record_key(entry['key'])
+
+    def _top_n(self, stat, n=8):
+        sorted_items = sorted(stat.iteritems(), key = lambda x: x[1], reverse = True)
+        return sorted_items[:n]
+
+    def _pretty_print(self, result, title, percentages=False):
+        print title
+        print '=' * 40
+        max_key_len = max((len(x[0]) for x in result))
+        max_val_len = max((len(str(x[1])) for x in result))
+        for key, val in result:
+            key_padding = max(max_key_len - len(key), 0) * ' '
+            if percentages:
+                val_padding = max(max_val_len - len(str(val)), 0) * ' '
+                val = '%s%s\t(%.2f%%)' % (val, val_padding, (float(val) / self.line_count) * 100)
+            print key,key_padding,'\t',val
+        print
+
+
     def print_stats(self):
         self._pretty_print(self._general_stats(), 'Overall Stats')
-        self._pretty_print(self._top_n(self.prefixes), 'Top Prefixes')
-        self._pretty_print(self._top_n(self.keys), 'Top Keys')
-        self._pretty_print(self._top_n(self.commands), 'Top Commands')
+        self._pretty_print(self._top_n(self.prefixes), 'Top Prefixes', percentages = True)
+        self._pretty_print(self._top_n(self.keys), 'Top Keys', percentages = True)
+        self._pretty_print(self._top_n(self.commands), 'Top Commands', percentages = True)
         self._pretty_print(self._time_stats(self.times), 'Command Time (microsecs)')
         self._pretty_print(self._heaviest_commands(self.times), 'Heaviest Commands (microsecs)')
         self._pretty_print(self._slowest_commands(self.times), 'Slowest Calls')
