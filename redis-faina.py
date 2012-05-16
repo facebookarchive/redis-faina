@@ -4,7 +4,7 @@ from collections import defaultdict
 import re
 
 line_re = re.compile(r"""
-    ^(?P<timestamp>[\d\.]+)\s"(?P<command>\w+)"(\s"(?P<key>[^(?<!\\)"]+)(?<!\\)")?(\s(?P<args>.+))?$
+    ^(?P<timestamp>[\d\.]+)\s(\(db\s(?P<db>\d*)\)\s)?"(?P<command>\w+)"(\s"(?P<key>[^(?<!\\)"]+)(?<!\\)")?(\s(?P<args>.+))?$
     """, re.VERBOSE)
 
 class StatCounter(object):
