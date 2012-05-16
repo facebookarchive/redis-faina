@@ -1,5 +1,6 @@
 #! /usr/bin/env python
-import fileinput
+import argparse
+import sys
 from collections import defaultdict
 import re
 
@@ -9,7 +10,7 @@ line_re = re.compile(r"""
 
 class StatCounter(object):
 
-    def __init__(self):
+    def __init__(self, prefix_delim=':'):
         self.line_count = 0
         self.skipped_lines = 0
         self.commands = defaultdict(int)
@@ -19,7 +20,7 @@ class StatCounter(object):
         self._cached_sorts = {}
         self.start_ts = None
         self.last_ts = None
-        self.prefix_delim = ':'
+        self.prefix_delim = prefix_delim
 
     def _record_duration(self, entry):
         ts = float(entry['timestamp']) * 1000 * 1000 # microseconds
@@ -105,6 +106,10 @@ class StatCounter(object):
     def _pretty_print(self, result, title, percentages=False):
         print title
         print '=' * 40
+        if not result:
+            print 'n/a\n'
+            return
+
         max_key_len = max((len(x[0]) for x in result))
         max_val_len = max((len(str(x[1])) for x in result))
         for key, val in result:
@@ -125,8 +130,8 @@ class StatCounter(object):
         self._pretty_print(self._heaviest_commands(self.times), 'Heaviest Commands (microsecs)')
         self._pretty_print(self._slowest_commands(self.times), 'Slowest Calls')
 
-    def process_input(self):
-        for line in fileinput.input():
+    def process_input(self, input):
+        for line in input:
             self.line_count += 1
             line = line.strip()
             match = line_re.match(line)
@@ -137,6 +142,19 @@ class StatCounter(object):
             self.process_entry(match.groupdict())
 
 if __name__ == '__main__':
-    counter = StatCounter()
-    counter.process_input()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'input',
+        type = argparse.FileType('r'),
+        default = sys.stdin,
+        nargs = '?',
+        help = "File to parse; will read from stdin otherwise")
+    parser.add_argument(
+        '--prefix-delimiter',
+        type = str,
+        help = "String to split on for delimiting prefix and rest of key",
+        required = False)
+    args = parser.parse_args()
+    counter = StatCounter(prefix_delim = args.prefix_delimiter)
+    counter.process_input(args.input)
     counter.print_stats()
