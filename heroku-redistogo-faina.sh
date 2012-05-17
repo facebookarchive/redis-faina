@@ -42,7 +42,9 @@ if [ -z "$INFO" ]; then
 fi
 
 if [ "$INFO" == "${INFO/Redis To Go/}"  ]; then
-  echo 'The heroku app $APP does not seem to have a Redis To Go addon enabled.';
+  echo "The heroku app \033[0;31m$APP\033[0;0m does not seem to have a Redis To Go addon enabled.";
+  echo "Here are the addons installed for this application:"
+  heroku addons --app $APP
   exit 1;
 fi
 
