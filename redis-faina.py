@@ -4,13 +4,17 @@ import sys
 from collections import defaultdict
 import re
 
-line_re = re.compile(r"""
+line_re_24 = re.compile(r"""
     ^(?P<timestamp>[\d\.]+)\s(\(db\s(?P<db>\d+)\)\s)?"(?P<command>\w+)"(\s"(?P<key>[^(?<!\\)"]+)(?<!\\)")?(\s(?P<args>.+))?$
+    """, re.VERBOSE)
+
+line_re_26 = re.compile(r"""
+    ^(?P<timestamp>[\d\.]+)\s\[(?P<db>\d+)\s\d+\.\d+\.\d+\.\d+:\d+]\s"(?P<command>\w+)"(\s"(?P<key>[^(?<!\\)"]+)(?<!\\)")?(\s(?P<args>.+))?$
     """, re.VERBOSE)
 
 class StatCounter(object):
 
-    def __init__(self, prefix_delim=':'):
+    def __init__(self, prefix_delim=':', redis_version=2.4):
         self.line_count = 0
         self.skipped_lines = 0
         self.commands = defaultdict(int)
@@ -20,7 +24,10 @@ class StatCounter(object):
         self._cached_sorts = {}
         self.start_ts = None
         self.last_ts = None
+        self.last_entry = None
         self.prefix_delim = prefix_delim
+        self.redis_version = redis_version
+        self.line_re = line_re_24 if self.redis_version < 2.5 else line_re_26
 
     def _record_duration(self, entry):
         ts = float(entry['timestamp']) * 1000 * 1000 # microseconds
@@ -28,8 +35,13 @@ class StatCounter(object):
             self.start_ts = ts
             self.last_ts = ts
         duration = ts - self.last_ts
-        if duration:
-            self.times.append((duration, entry))
+        if self.redis_version < 2.5:
+            cur_entry = entry
+        else:
+            cur_entry = self.last_entry
+            self.last_entry = entry
+        if duration and cur_entry:
+            self.times.append((duration, cur_entry))
         self.last_ts = ts
 
     def _record_command(self, entry):
@@ -134,7 +146,7 @@ class StatCounter(object):
         for line in input:
             self.line_count += 1
             line = line.strip()
-            match = line_re.match(line)
+            match = self.line_re.match(line)
             if not match:
                 if line != "OK":
                     self.skipped_lines += 1
@@ -155,7 +167,13 @@ if __name__ == '__main__':
         default = ':',
         help = "String to split on for delimiting prefix and rest of key",
         required = False)
+    parser.add_argument(
+        '--redis-version',
+        type = float,
+        default = 2.4,
+        help = "Version of the redis server being monitored",
+        required = False)
     args = parser.parse_args()
-    counter = StatCounter(prefix_delim = args.prefix_delimiter)
+    counter = StatCounter(prefix_delim = args.prefix_delimiter, redis_version = args.redis_version)
     counter.process_input(args.input)
     counter.print_stats()

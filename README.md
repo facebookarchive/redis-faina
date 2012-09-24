@@ -10,11 +10,16 @@ as well.
 Usage is simple:
 
     # reading from stdin
-    redis-cli -p 6490 MONITOR | head -n <NUMBER OF LINES TO ANALYZE> | ./redis-faina.py
+    redis-cli -p 6490 MONITOR | head -n <NUMBER OF LINES TO ANALYZE> | ./redis-faina.py [options]
 
     # reading a file
     redis-cli -p 6490 MONITOR | head -n <...> > /tmp/outfile.txt
-    ./redis-faina.py /tmp/outfile.txt
+    ./redis-faina.py [options] /tmp/outfile.txt
+    
+ 		options:
+  	--prefix-delimiter=...         	String to split on for delimiting prefix and rest of key, if not provided `:` is the default . --prefix-delimiter=#
+  	--redis-version=...       			  Version of the redis server being monitored, if not provided `2.4` is the default. e.g. --redis-version=2.6
+
 
 The output (anonymized below with 'zzz's) looks as follows:
 
