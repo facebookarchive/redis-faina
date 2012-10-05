@@ -41,7 +41,7 @@ if [ -z "$INFO" ]; then
   INFO=`heroku info --app $APP 2>&1`
 fi
 
-if [ "$INFO" == "${INFO/Redis To Go/}"  ]; then
+if [ "$INFO" == "${INFO/redistogo/}"  ]; then
   echo "The heroku app \033[0;31m$APP\033[0;0m does not seem to have a Redis To Go addon enabled.";
   echo "Here are the addons installed for this application:"
   heroku addons --app $APP
@@ -50,7 +50,7 @@ fi
 
 # Parse Redis To Go url
 REDISTOGO_URL=`heroku config --app $APP | grep REDISTOGO_URL`
-PASSWORD_HOST_PORT_RAW=`echo $REDISTOGO_URL | cut -d " " -f 3 | sed -e "s/redis:\/\/redistogo://"`
+PASSWORD_HOST_PORT_RAW=`echo $REDISTOGO_URL | cut -d " " -f 2 | sed -e "s/redis:\/\/redistogo://"`
 tokens=(`echo "$PASSWORD_HOST_PORT_RAW" | awk -F'@|:|/' '{print $1 " " $2 " " $3 }'`)
 PASSWORD=${tokens[0]}
 HOST=${tokens[1]}
