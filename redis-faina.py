@@ -14,7 +14,7 @@ line_re_26 = re.compile(r"""
 
 class StatCounter(object):
 
-    def __init__(self, prefix_delim=':', redis_version=2.4):
+    def __init__(self, prefix_delim=':', redis_version=2.6):
         self.line_count = 0
         self.skipped_lines = 0
         self.commands = defaultdict(int)
@@ -170,7 +170,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--redis-version',
         type = float,
-        default = 2.4,
+        default = 2.6,
         help = "Version of the redis server being monitored",
         required = False)
     args = parser.parse_args()

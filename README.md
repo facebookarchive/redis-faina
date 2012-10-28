@@ -18,7 +18,7 @@ Usage is simple:
     
  		options:
   	--prefix-delimiter=...         	String to split on for delimiting prefix and rest of key, if not provided `:` is the default . --prefix-delimiter=#
-  	--redis-version=...       			  Version of the redis server being monitored, if not provided `2.4` is the default. e.g. --redis-version=2.6
+  	--redis-version=...       			  Version of the redis server being monitored, if not provided `2.6` is the default. e.g. --redis-version=2.4
 
 
 The output (anonymized below with 'zzz's) looks as follows:
